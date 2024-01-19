@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login and Register</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <!-- 引入 Axios 库 -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      width: 300px;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input {
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <a @click="showLoginForm">登录</a>  |
+    <a @click="showRegisterForm">注册</a>
+
+    <form v-if="showLogin" method="post" action="/login">
+        <input type="text" v-model="username" name="username" placeholder="账号"><br>
+        <input type="password" v-model="password" name="password" placeholder="密码"><br>
+        <button @click="login">登录</button>
+    </form>
+
+    <form v-if="showRegister" method="post" action="/register">
+        <input type="text" v-model="username" name="username" placeholder="账号">
+        <span v-if="username.length > 20" class="error-message">账号长度不能超过20字符</span><br>
+
+        <input type="password" v-model="password" name="password" placeholder="密码" @blur="validatePassword">
+        <span v-if="!isPasswordValid && passwordBlurred" class="error-message">密码必须为6到20位以内的数字和字母的组合</span><br>
+        <input type="password" v-model="confirmPassword" placeholder="确认密码"><br>
+        <button @click="register" :disabled="!isPasswordMatch">注册</button>
+    </form>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            showLogin: true,
+            showRegister: false,
+            username: '',
+            password: '',
+            confirmPassword: '',
+            isPasswordValid: true,
+            passwordBlurred: false,
+            isRegister: true
+        },
+        methods: {
+            showLoginForm() {
+                this.showLogin = true;
+                this.showRegister = false;
+            },
+            showRegisterForm() {
+                this.showLogin = false;
+                this.showRegister = true;
+            },
+            login() {
+            },
+            validatePassword() {
+                // 校验密码格式
+                const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,20}$/;
+                this.isPasswordValid = passwordRegex.test(this.password);
+                this.passwordBlurred = true;
+            },
+            register() {
+                // 处理注册逻辑
+                if (this.username.length > 20) {
+                    alert('用户名长度不能超过20字符');
+                    return;
+                }
+
+                this.validatePassword();
+            }
+        },
+        computed: {
+            isPasswordMatch() {
+                return this.password === this.confirmPassword;
+            }
+        }
+    });
+</script>
+</body>
+</html>
