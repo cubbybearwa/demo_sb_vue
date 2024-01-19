@@ -20,4 +20,15 @@ public class UserController {
         userService.registerUser(user);
         return "redirect:/success.html";
     }
+
+    @RequestMapping("/login")
+    public String loginUser(@RequestParam String username, @RequestParam String password){
+        User user= userService.queryuserByUsername(username);
+        if(user.getUsername().equals(username)&&user.getPassword().equals(password)){
+            return "redirect:/success.html";
+        }else{
+            return "redirect:/index.html";
+        }
+    }
+
 }
